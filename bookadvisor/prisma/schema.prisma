@@ -1,0 +1,53 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id          Int           @id @default(autoincrement())
+  name        String
+  email       String        @unique
+  readingList ReadingList[]
+  booksRead   BooksRead[]
+  createdAt   DateTime      @default(now())
+}
+
+model ReadingList {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  bookId     String
+  title      String
+  authors    String?
+  thumbnail  String?
+  priority   String?   // high, medium, low
+  notes      String?
+  addedAt    DateTime  @default(now())
+  read       Boolean   @default(false)
+  @@index([userId])
+  @@index([bookId])
+}
+
+model BooksRead {
+  id          Int      @id @default(autoincrement())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int
+  bookId      String
+  title       String
+  authors     String?
+  pages       Int?
+  publisher   String?
+  publishedAt String?
+  categories  String?
+  isbn        String?
+  thumbnail   String?
+  rating      Int?
+  review      String?
+  finishedAt  DateTime @default(now())
+  @@index([userId])
+  @@index([bookId])
+}
