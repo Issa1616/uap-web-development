@@ -27,7 +27,7 @@ export default function ChatUI({ userId = 1 }) {
 
       let aiText = "";
       if (data.tool === "searchBooks") {
-        aiText = "📚 Recomendaciones:\n" + data.books.map((b, i) => `${i + 1}. ${b.title} — ${b.authors}`).join("\n");
+        aiText = "Recomendaciones:\n" + data.books.map((b, i) => `${i + 1}. ${b.title} — ${b.authors}`).join("\n");
       } else if (data.tool === "getBookDetails") {
         const b = data.book;
         aiText = `${b.title} — ${b.authors}\n${b.pageCount ? b.pageCount + " páginas\n" : ""}${b.description || ""}`;
@@ -36,11 +36,11 @@ export default function ChatUI({ userId = 1 }) {
         aiText = list.length ? list.map((x, i) => `${i + 1}. ${x.title} — ${x.authors}`).join("\n") : "Tu lista está vacía.";
       } else if (data.tool === "getReadingStats") {
         const s = data.stats || {};
-        aiText = `📊 Lectura:\nLeídos: ${s.totalRead}\nEn lista: ${s.totalReading}\nPáginas totales: ${s.pagesTotal}\nGénero favorito: ${s.favoriteGenre || "N/A"}`;
+        aiText = `Lectura:\nLeídos: ${s.totalRead}\nEn lista: ${s.totalReading}\nPáginas totales: ${s.pagesTotal}\nGénero favorito: ${s.favoriteGenre || "N/A"}`;
       } else if (data.tool === "addToReadingList") {
-        aiText = data.result?.already ? "El libro ya estaba en tu lista." : "Libro agregado a tu lista ✅";
+        aiText = data.result?.already ? "El libro ya estaba en tu lista." : "Libro agregado a tu lista";
       } else if (data.tool === "markAsRead") {
-        aiText = "¡Genial! Libro marcado como leído ✅";
+        aiText = "¡Genial! Libro marcado como leído";
       } else if (data.message) {
         aiText = data.message;
       } else if (data.error) {
@@ -52,7 +52,7 @@ export default function ChatUI({ userId = 1 }) {
       setMessages((prev) => [...prev, { role: "ai", content: aiText }]);
     } catch (err) {
       console.error(err);
-      setMessages((prev) => [...prev, { role: "ai", content: "⚠️ Ocurrió un error en el servidor" }]);
+      setMessages((prev) => [...prev, { role: "ai", content: "Ocurrió un error en el servidor" }]);
     } finally {
       setLoading(false);
     }
@@ -76,7 +76,7 @@ export default function ChatUI({ userId = 1 }) {
               <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>{m.content}</pre>
             </div>
           ))}
-          {loading && <div style={{ ...styles.msg, ...styles.ai }}>⏳ AI pensando...</div>}
+          {loading && <div style={{ ...styles.msg, ...styles.ai }}>AI pensando...</div>}
         </div>
 
         <div style={styles.inputArea}>

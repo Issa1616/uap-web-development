@@ -12,7 +12,6 @@ export async function POST(req: NextRequest) {
 
     const lowerQuery = query.toLowerCase();
 
-    // ======== searchBooks ========
     if (lowerQuery.includes("libros") || lowerQuery.includes("románticos") || lowerQuery.includes("famosos")) {
       const res = await fetch(
         `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&key=${GOOGLE_BOOKS_API_KEY}&maxResults=5`
@@ -29,13 +28,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ tool: "searchBooks", books });
     }
 
-    // ======== getBookDetails ========
     if (lowerQuery.includes("cuéntame") || lowerQuery.includes("detalles") || lowerQuery.includes("más sobre")) {
       const bookIdMatch = query.match(/(?:sobre|cuéntame|detalles)\s(.+)/i);
       if (!bookIdMatch) return NextResponse.json({ tool: "error", error: "No se encontró libro" });
 
-      const bookId = bookIdMatch[1].trim().replace(/\s/g, "_"); // para ejemplo
-      // Llamamos Google Books API
+      const bookId = bookIdMatch[1].trim().replace(/\s/g, "_");
+
       const res = await fetch(`https://www.googleapis.com/books/v1/volumes/${bookId}?key=${GOOGLE_BOOKS_API_KEY}`);
       if (!res.ok) return NextResponse.json({ tool: "error", error: "Libro no encontrado en Google Books" });
       const data = await res.json();
@@ -54,7 +52,6 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // ======== addToReadingList ========
     if (lowerQuery.includes("pon en mi lista") || lowerQuery.includes("agrega a mi lista")) {
       const titleMatch = query.match(/libro (.+)/i);
       const title = titleMatch ? titleMatch[1] : query;
@@ -70,13 +67,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ tool: "addToReadingList", result: { already: false } });
     }
 
-    // ======== getReadingList ========
     if (lowerQuery.includes("mi lista") || lowerQuery.includes("qué libros")) {
       const list = await prisma.readingList.findMany({ where: { userId } });
       return NextResponse.json({ tool: "getReadingList", list });
     }
 
-    // ======== markAsRead ========
     if (lowerQuery.includes("ya lei") || lowerQuery.includes("terminé")) {
       const titleMatch = query.match(/libro (.+)/i);
       if (!titleMatch) return NextResponse.json({ tool: "error", error: "No se encontró libro" });
@@ -92,7 +87,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ tool: "markAsRead" });
     }
 
-    // ======== getReadingStats ========
     if (lowerQuery.includes("estadísticas") || lowerQuery.includes("stats")) {
       const totalRead = await prisma.booksRead.count({ where: { userId } });
       const totalReading = await prisma.readingList.count({ where: { userId } });
@@ -111,7 +105,6 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // ======== Default ========
     return NextResponse.json({ tool: "error", error: "No entendí la solicitud" });
   } catch (err: any) {
     console.error(err);
